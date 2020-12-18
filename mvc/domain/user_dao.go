@@ -21,12 +21,10 @@ func GetUser(userID int64) (*User, *utils.ApplicationError) {
 	if user := users[userID]; user != nil {
 		return user, nil
 	}
-	// return User{}, fmt.Errorf("user %v was not found", userID) // if returning User, must return empty User{}
-	// return nil, fmt.Errorf("user %v was not found", userID) // if returning *User, can use nil
 
 	// if error, return the error back to the serveres.GetUser() func
 	return nil, &utils.ApplicationError{
-		Message:    fmt.Sprintf("User %v was not found.", userID),
+		Message:    fmt.Sprintf("user %v does not exist", userID),
 		StatusCode: http.StatusNotFound,
 		Code:       "not_found",
 	}
