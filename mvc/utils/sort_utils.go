@@ -19,6 +19,9 @@ func bubbleSort(elements []int) []int {
 }
 
 func Sort(els []int) []int {
+	if els == nil {
+		return nil
+	}
 	if len(els) <= 23500 {
 		// call custom bubble sort
 		bubbleSort(els)

@@ -39,7 +39,7 @@ func TestBubbleSortNilSlice(t *testing.T) {
 
 	els := Sort(nil)
 
-	assert.EqualValues(t, nil, els) // check output
+	assert.EqualValues(t, []int(nil), els) // check output
 }
 
 func getElements(n int) []int {

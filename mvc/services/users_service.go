@@ -5,8 +5,19 @@ import (
 	"github.com/cmd-ctrl-q/industry-rest-microservices/mvc/utils"
 )
 
-// GetUser calls the domain GetUser 
-func GetUser(userID int64) (*domain.User, *utils.ApplicationError) {
+type usersService struct {
+}
 
-	return domain.GetUser(userID)
+var (
+	UsersService usersService
+)
+
+// GetUser calls the UserDao GetUser() in domain/user_dao.go
+func (u *usersService) GetUser(userID int64) (*domain.User, *utils.ApplicationError) {
+
+	user, err := domain.UserDao.GetUser(userID)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }
