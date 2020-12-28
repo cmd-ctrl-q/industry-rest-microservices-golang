@@ -1,6 +1,7 @@
 ### Misc ### 
 /resources
-/*/**/README.md
+/*/**/*.md 
+PRIVAT.md
 benchmark.out
 
 # Created by https://www.toptal.com/developers/gitignore/api/go

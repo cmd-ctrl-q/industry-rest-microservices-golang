@@ -1,45 +1,41 @@
 package controllers
 
 import (
-	"encoding/json"
 	"net/http"
 	"strconv"
 
 	"github.com/cmd-ctrl-q/industry-rest-microservices/mvc/services"
 	"github.com/cmd-ctrl-q/industry-rest-microservices/mvc/utils"
+	"github.com/gin-gonic/gin"
 )
 
 // GetUser ...
-func GetUser(w http.ResponseWriter, r *http.Request) {
+func GetUser(c *gin.Context) {
 
-	userIDParam := r.URL.Query().Get("user_id")
-	userID, err := strconv.ParseInt(userIDParam, 10, 64)
+	userID, err := strconv.ParseInt(c.Param("user_id"), 10, 64)
 
 	if err != nil {
-
-		appErr := &utils.ApplicationError{
+		apiErr := &utils.ApplicationError{
 			Message:    "user_id must be a number",
 			StatusCode: http.StatusBadRequest,
 			Code:       "bad_request",
 		}
-
-		jsonValue, _ := json.Marshal(appErr)
-
-		w.WriteHeader(appErr.StatusCode)
-		w.Write(jsonValue)
+		utils.RespondError(c, apiErr)
+		// utils.Respond(c, apiErr.StatusCode, apiErr)
+		// c.JSON(apiErr.StatusCode, apiErr)
 		return
 	}
 
+	// user id invalid, or internal service error (db error), etc.
 	user, apiErr := services.UsersService.GetUser(userID)
-
 	if apiErr != nil {
-
-		jsonValue, _ := json.Marshal(apiErr)
-		w.WriteHeader(apiErr.StatusCode)
-		w.Write(jsonValue)
+		utils.RespondError(c, apiErr)
+		// utils.Respond(c, apiErr.StatusCode, apiErr)
+		// c.JSON(apiErr.StatusCode, apiErr)
 		return
 	}
 
-	jsonValue, _ := json.Marshal(user)
-	w.Write(jsonValue)
+	// user exists,
+	utils.Respond(c, http.StatusOK, user)
+	// c.JSON(http.StatusOK, user)
 }
