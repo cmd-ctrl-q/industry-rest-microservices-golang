@@ -12,7 +12,7 @@ import (
 	"github.com/cmd-ctrl-q/industry-rest-microservices/src/api/clients/restclient"
 	"github.com/cmd-ctrl-q/industry-rest-microservices/src/api/domain/repositories"
 	"github.com/cmd-ctrl-q/industry-rest-microservices/src/api/utils/errors"
-	"github.com/gin-gonic/gin"
+	"github.com/cmd-ctrl-q/industry-rest-microservices/src/api/utils/test_utils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -24,14 +24,9 @@ func TestMain(m *testing.M) {
 
 // T1
 func TestCreateRepoInvalidJSONRequest(t *testing.T) {
-	// ask for new response
-	response := httptest.NewRecorder()
-	// create context based on this response
-	c, _ := gin.CreateTestContext(response)
-	// get request
 	request, _ := http.NewRequest(http.MethodPost, "/repositories", strings.NewReader(``))
-	// assign request to context
-	c.Request = request
+	response := httptest.NewRecorder()
+	c := test_utils.GetMockedContext(request, response) // get mocked context based on this request and response
 
 	// test create repo
 	CreateRepo(c)
@@ -50,15 +45,6 @@ func TestCreateRepoInvalidJSONRequest(t *testing.T) {
 
 // T2
 func TestCreateRepoErrorFromGithub(t *testing.T) {
-	// ask for new response
-	response := httptest.NewRecorder()
-	// create context based on this response
-	c, _ := gin.CreateTestContext(response)
-	// get request
-	request, _ := http.NewRequest(http.MethodPost, "/repositories", strings.NewReader(`{"name": "some-cool-repo"}`))
-	// assign request to context
-	c.Request = request
-
 	// create mock
 	restclient.AddMockup(restclient.Mock{
 		URL:        "https://api.github.com/user/repos",
@@ -68,6 +54,10 @@ func TestCreateRepoErrorFromGithub(t *testing.T) {
 			Body:       ioutil.NopCloser(strings.NewReader(`{"message": "Requires authentication", "documentation_url": "https://docs.github.com/rest/reference/repos#create-a-repository-for-the-authenticated-user"}`)),
 		},
 	})
+
+	request, _ := http.NewRequest(http.MethodPost, "/repositories", strings.NewReader(`{"name": "some-cool-repo"}`))
+	response := httptest.NewRecorder()
+	c := test_utils.GetMockedContext(request, response) // get mocked context based on this request and response
 
 	// test create repo
 	CreateRepo(c)
@@ -86,15 +76,6 @@ func TestCreateRepoErrorFromGithub(t *testing.T) {
 
 // T3
 func TestCreateRepoNoError(t *testing.T) {
-	// ask for new response
-	response := httptest.NewRecorder()
-	// create context based on this response
-	c, _ := gin.CreateTestContext(response)
-	// get request
-	request, _ := http.NewRequest(http.MethodPost, "/repositories", strings.NewReader(`{"name": "some-cool-repo"}`))
-	// assign request to context
-	c.Request = request
-
 	// create mock
 	restclient.AddMockup(restclient.Mock{
 		URL:        "https://api.github.com/user/repos",
@@ -104,6 +85,10 @@ func TestCreateRepoNoError(t *testing.T) {
 			Body:       ioutil.NopCloser(strings.NewReader(`{"id": 123}`)),
 		},
 	})
+
+	request, _ := http.NewRequest(http.MethodPost, "/repositories", strings.NewReader(`{"name": "some-cool-repo"}`))
+	response := httptest.NewRecorder()
+	c := test_utils.GetMockedContext(request, response) // get mocked context based on this request and response
 
 	// test create repo
 	CreateRepo(c)

@@ -6,7 +6,7 @@ import (
 )
 
 func mapUrls() {
-	router.GET("/marco", polo.Polo)
+	router.GET("/marco", polo.Marco)
 	// any requests coming in from /repositories is going to be handled by the repositories controller
 	router.POST("/repositories", repositories.CreateRepo)
 }
