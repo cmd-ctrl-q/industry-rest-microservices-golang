@@ -13,3 +13,5 @@ How to run a coverage test
 
 Every return should have its own test case. 
 
+Note:
+After you create the function/method, you should create the test case. 
